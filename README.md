@@ -1,2 +1,1 @@
-# mocha-test-async
-⚡ Collection of different ways to test asynchronous code 
+# Testing async code with Mocha.js
