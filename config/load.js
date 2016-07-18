@@ -6,6 +6,7 @@ const
 
 module.exports = (sourceDir) => {
     require('./testConfig');
+    require('babel-polyfill');
 
     const SPECS_PATTERN = path.join(sourceDir, '/**/*.spec.js');
 
