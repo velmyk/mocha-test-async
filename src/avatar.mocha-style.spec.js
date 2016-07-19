@@ -15,9 +15,7 @@ describe('avatar: mocha-style', () => {
         UserService,
         ErrorService;
 
-    let userNameDeferred,
-        successCb,
-        failCb;
+    let userNameDeferred;
 
     beforeEach(() => {
 
@@ -37,10 +35,6 @@ describe('avatar: mocha-style', () => {
         });
 
         sut = avatar.default;
-
-        failCb = env.stub();
-        successCb = env.stub();
-        
     });
 
     it('should call for current user name', () => {
@@ -116,7 +110,7 @@ describe('avatar: mocha-style', () => {
             });
 
             it('should handle error', () => {
-                sut().catch(() => {
+                return sut().catch(() => {
                     ErrorService.handleError.should.calledWith(fakeFetchError);
                 });
             });

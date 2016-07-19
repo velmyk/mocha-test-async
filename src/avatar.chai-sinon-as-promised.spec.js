@@ -2,28 +2,20 @@
 
 /*
  * Don't forget to return promise from test.
- * Can not deal with sinon style assertions.
  */
 
 const
-    proxyquire = require('proxyquire').noCallThru(),
-    q = require('q');
+    proxyquire = require('proxyquire').noCallThru();
 
 describe('avatar: chai-as-promised', () => {
     let sut,
         UserService,
         ErrorService;
 
-    let userNameDeferred,
-        successCb,
-        failCb;
-
     beforeEach(() => {
 
-        userNameDeferred = q.defer();
-
         UserService = {
-            getCurrentUserName: env.stub().returns(userNameDeferred.promise)
+            getCurrentUserName: env.stub().resolves()
         };
 
         ErrorService = {
@@ -36,10 +28,6 @@ describe('avatar: chai-as-promised', () => {
         });
 
         sut = avatar.default;
-
-        failCb = env.stub();
-        successCb = env.stub();
-        
     });
 
     it('should call for current user name', () => {
@@ -52,8 +40,7 @@ describe('avatar: chai-as-promised', () => {
 
         beforeEach(() => {
             getUserNameError = {};
-            userNameDeferred.reject(getUserNameError);
-            ErrorService.handleError.returns(q.reject());
+            ErrorService.handleError.rejects(getUserNameError);
         });
 
         it('should handle error', () => {
@@ -68,7 +55,7 @@ describe('avatar: chai-as-promised', () => {
 
         beforeEach(() => {
             fakeUserName = 'fakeUserName';
-            userNameDeferred.resolve(fakeUserName);
+            UserService.getCurrentUserName.resolves(fakeUserName);
             global.fetch = env.stub();
         });
 
@@ -89,7 +76,7 @@ describe('avatar: chai-as-promised', () => {
                 fakeFetchResponse = {
                     json: env.stub().returns(fakeGithubInfo)
                 };
-                global.fetch.returns(q.when(fakeFetchResponse));
+                global.fetch.resolves(fakeFetchResponse);
             });
 
             it('should parse response', () => {
@@ -108,12 +95,12 @@ describe('avatar: chai-as-promised', () => {
 
             beforeEach(() => {
                 fakeFetchError = {};
-                global.fetch.returns(q.reject(fakeFetchError));
-                ErrorService.handleError.returns(q.reject());
+                global.fetch.rejects(fakeFetchError);
+                ErrorService.handleError.rejects();
             });
 
             it('should handle error', () => {
-                sut().catch(() => {
+                return sut().catch(() => {
                     ErrorService.handleError.should.calledWith(fakeFetchError);
                 });
             });

@@ -13,9 +13,7 @@ describe('avatar: async-await', () => {
         UserService,
         ErrorService;
 
-    let userNameDeferred,
-        successCb,
-        failCb;
+    let userNameDeferred;
 
     beforeEach(() => {
 
@@ -35,10 +33,6 @@ describe('avatar: async-await', () => {
         });
 
         sut = avatar.default;
-
-        failCb = env.stub();
-        successCb = env.stub();
-        
     });
 
     it('should call for current user name', () => {
