@@ -1,7 +1,9 @@
 # Testing async code with Mocha.js
 
 Collection of different ways to test asynchronous code:
- - using async / await 
+ - pure mocha style
+ - using async / await
+ - using schai-as-promised
 
 ### To run tests
 

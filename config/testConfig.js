@@ -4,7 +4,7 @@ const
     chai = require('chai'),
     sinon = require('sinon'),
     sinonChai = require('sinon-chai'),
-    sinonAsPromised = require('sinon-as-promised'),
+    // sinonAsPromised = require('sinon-as-promised'),
     chaiAsPromised = require('chai-as-promised'),
     q = require('q');
 
@@ -14,7 +14,7 @@ global.sinon = sinon;
 chai.should();
 
 chai.use(sinonChai);
-// chai.use(chaiAsPromised);
+chai.use(chaiAsPromised);
 
 global.mochaAsync = (fn) =>
     async (done) => {
