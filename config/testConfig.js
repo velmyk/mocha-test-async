@@ -10,11 +10,11 @@ const
 
 global.env = null;
 global.sinon = sinon;
-sinonAsPromised(q.Promise);
+// sinonAsPromised(q.Promise);
 chai.should();
 
 chai.use(sinonChai);
-chai.use(chaiAsPromised);
+// chai.use(chaiAsPromised);
 
 global.mochaAsync = (fn) =>
     async (done) => {

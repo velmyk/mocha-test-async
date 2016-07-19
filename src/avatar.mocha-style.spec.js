@@ -1,14 +1,16 @@
 'use strict';
 
 /*
- * Don't forgetabout 'mochaAsync' function custom realisation in test config.
+ * To match implementatio it tests.
+ * Don't forget to return promise from test.
+ * Don't mix done callback with promise.
  */
 
 const
     proxyquire = require('proxyquire').noCallThru(),
     q = require('q');
 
-describe('avatar: async-await', () => {
+describe('avatar: mocha-style', () => {
     let sut,
         UserService,
         ErrorService;
@@ -52,12 +54,14 @@ describe('avatar: async-await', () => {
         beforeEach(() => {
             getUserNameError = {};
             userNameDeferred.reject(getUserNameError);
+            ErrorService.handleError.returns(q.reject());
         });
 
-        it('should handle error', mochaAsync(async () => {
-            await sut();
-            ErrorService.handleError.should.calledWith(getUserNameError);
-        }));
+        it('should handle error', () => {
+            return sut().catch(() => {
+                ErrorService.handleError.should.calledWith(getUserNameError);
+            });
+        });
     });
 
     context('when get current user success', () => {
@@ -69,10 +73,11 @@ describe('avatar: async-await', () => {
             global.fetch = env.stub();
         });
 
-        it('should get user github info', mochaAsync(async () => {
-            await sut();
-            fetch.should.calledWith(`https://api.github.com/users/${fakeUserName}`);
-        }));
+        it('should get user github info', () => {
+            return sut().then(() => {
+                fetch.should.calledWith(`https://api.github.com/users/${fakeUserName}`);
+            });
+        });
 
         context('when get github info success', () => {
             let fakeFetchResponse,
@@ -88,15 +93,17 @@ describe('avatar: async-await', () => {
                 global.fetch.returns(q.when(fakeFetchResponse));
             });
 
-            it('should parse response', mochaAsync(async () => {
-                await sut();
-                fakeFetchResponse.json.should.called;
-            }));
+            it('should parse response', () => {
+                return sut().then(() => {
+                    fakeFetchResponse.json.should.called;
+                });
+            });
 
-            it('should return user\'s Github avatar', mochaAsync(async () => {
-                const result = await sut();
-                result.should.equal('avatar_url');
-            }));
+            it('should return user\'s Github avatar', () => {
+                return sut().then(result => {
+                    result.should.equal('avatar_url');
+                });
+            });
         });
 
         context('when get github info fails', () => {
@@ -105,12 +112,14 @@ describe('avatar: async-await', () => {
             beforeEach(() => {
                 fakeFetchError = {};
                 global.fetch.returns(q.reject(fakeFetchError));
+                ErrorService.handleError.returns(q.reject());
             });
 
-            it('should handle error', mochaAsync(async () => {
-                await sut();
-                ErrorService.handleError.should.calledWith(fakeFetchError);
-            }));
+            it('should handle error', () => {
+                sut().catch(() => {
+                    ErrorService.handleError.should.calledWith(fakeFetchError);
+                });
+            });
         });
     });
 });
